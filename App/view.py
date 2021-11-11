@@ -72,7 +72,11 @@ def req3(analyzer):
   print('+-+-+-+-+-+-+-+-+ REQ 3 +-+-+-+-+-+-+-+-+\n')
   # INPUTS
   ti = input('Initial time?\n').strip()
-  tf = input('final time?\n').strip()
+  if ti == 'test':
+    ti = '20:45'
+    tf = '23:15'
+  else:
+    tf = input('final time?\n').strip()
   # DATA
   start_time = time.process_time()
   controller.req3(analyzer,ti,tf)

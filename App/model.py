@@ -88,6 +88,7 @@ def initanalyzer():
   # TIME
   analyzer['time rbt'] = rbt.newMap(cmptime) # TODO
   analyzer['best time'] = {'best':None,'count':0} # TODO
+  analyzer['time prints'] = {'count':0,'ufos':rbt.newMap(cmptimedate)}
   # DATE
   analyzer['date map'] = mp.newMap(numelements = 10525, maptype = 'CHAINING', loadfactor = 1) 
   analyzer['best date'] = {'best':None,'count':0} 
@@ -128,7 +129,7 @@ def timedefault(analyzer,ufo):
   # TIME
   new = {}
   new['count'] = 1
-  new['ufos'] = rbt.newMap(cmptimerbt)
+  new['ufos'] = rbt.newMap(cmptimedate)
   rbt.put(new['ufos'],ufo,None)
   rbt.put(analyzer['time rbt'],ufo.time,new)
 ############################
@@ -391,8 +392,8 @@ def req3(analyzer,ti,tf):
   defaultvalues = rbt.values(analyzer['time rbt'],tf,ti)
   for default in lt.iterator(defaultvalues):
     for ufo in lt.iterator(rbt.keySet(default['ufos'])):
-      prints(analyzer['date prints'],ufo,cmptimerbt)
-      analyzer['date prints']['count'] += 1
+      prints(analyzer['time prints'],ufo,cmptimedate)
+      analyzer['time prints']['count'] += 1
 
 # def req4(analyzer,datei,datef):
 #   newdate = lambda y,m,d : datetime.date(y,m,d)
