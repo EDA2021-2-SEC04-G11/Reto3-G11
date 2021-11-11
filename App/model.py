@@ -392,8 +392,8 @@ def req3(analyzer,ti,tf):
   defaultvalues = rbt.values(analyzer['time rbt'],tf,ti)
   for default in lt.iterator(defaultvalues):
     for ufo in lt.iterator(rbt.keySet(default['ufos'])):
-      prints(analyzer['date prints'],ufo,cmptimedate)
-      analyzer['date prints']['count'] += 1
+      prints(analyzer['time prints'],ufo,cmptimedate)
+      analyzer['time prints']['count'] += 1
 
 # def req4(analyzer,datei,datef):
 #   newdate = lambda y,m,d : datetime.date(y,m,d)

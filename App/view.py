@@ -83,8 +83,8 @@ def req3(analyzer):
   stop_time = time.process_time()
   timef = round((stop_time - start_time)*1000,2)
   # PRINT
-  lst = rbt.keySet(analyzer['date prints']['ufos'])
-  count = analyzer['date prints']['count']
+  lst = rbt.keySet(analyzer['time prints']['ufos'])
+  count = analyzer['time prints']['count']
   print(f"Lastest time: {analyzer['best time']['best']} count: {analyzer['best time']['count']}")
   print(f"There are {count} UFO's reported in that range of time.")
   print(f"Last 3 and first 3 are:")
