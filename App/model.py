@@ -351,7 +351,7 @@ def req1(analyzer,city):
 def req2(analyzer):
   pass
 
-def req3(analyzer,ti,tf): 
+def req3(analyzer,ti,tf):
   defaultvalues = rbt.values(analyzer['time rbt'],tf,ti)
   for default in lt.iterator(defaultvalues):
     for ufo in lt.iterator(rbt.keySet(default['ufos'])):
