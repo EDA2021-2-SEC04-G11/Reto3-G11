@@ -2,6 +2,24 @@
 import model
 import csv
 
+# FOR SMALL FILE:
+#TOTAL UFOS = 803
+#cities keys = 679
+#durations keys = 58
+#time keys = 249
+#date keys = 750
+#longitude keys = 632
+#latitude max count amougnst keys = 8
+
+# FOR LARGE FILE:
+#TOTAL UFOS = 80332
+#cities keys = 19900
+#duration keys = 533
+#time keys = 1390
+#date keys = 10525
+#longitude keys = 6977
+#latitude max count amougnst keys = 614
+
 # EMPTY analyzer
 
 def initanalyzer():
@@ -11,20 +29,12 @@ def initanalyzer():
 
 def loaddata(analyzer):
   load(analyzer)
-  sort(analyzer)
-  #model.test(analyzer)
 
 def load(analyzer):
   filedir = cf.data_dir + 'UFOS/UFOS-utf8-small.csv'
   file = csv.DictReader(open(filedir, encoding='utf-8'))
   for ufo in file:
     model.add(analyzer,ufo)
-
-def sort(analyzer):
-  model.sort(analyzer)
-  
-def changestate(analyzer):
-  model.changestate(analyzer)
 
 # REQUIREMENTS
 
@@ -39,9 +49,6 @@ def req3(analyzer,ti,tf):
 
 def req4(analyzer,di,df):
   return model.req4(analyzer,di,df)
-
-def req6(analyzer):
-  return model.req6(analyzer)
 
 def req5(analyzer,longi,longf,lati,latf):
   return model.req5(analyzer,longi,longf,lati,latf)

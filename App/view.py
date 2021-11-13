@@ -29,7 +29,12 @@ def charge():
   print('\n\n ... DATA LOADED ...\n\n')
   stop_time = time.process_time()
   elapsed_time_mseg = round((stop_time - start_time)*1000,2)
+  print(f"Total UFO loaded: {analyzer['exhibition']['total']}")
+  print(f"First 5 and last 5:")
+  for i in lt.iterator(analyzer['exhibition']['list']):
+    i.printufo()
   print(f"TIME : {round(elapsed_time_mseg,2)}")
+  input('\nPRESS ENTER TO CONTINUE')
   return analyzer
 
 def initanalyzer():
@@ -42,6 +47,8 @@ def req1(analyzer):
   print('+-+-+-+-+-+-+-+-+ REQ 1 +-+-+-+-+-+-+-+-+\n')
   # INPUTS
   city = input('City?\n').strip()
+  if city == 'test':
+    city = 'las vegas'
   # DATA
   start_time = time.process_time()
   target = controller.req1(analyzer,city)
@@ -75,6 +82,7 @@ def req3(analyzer):
   if ti == 'test':
     ti = '20:45'
     tf = '23:15'
+    print(ti,tf)
   else:
     tf = input('final time?\n').strip()
   # DATA
@@ -100,6 +108,7 @@ def req4(analyzer):
   if di == 'test':
     di = '1945-08-06'
     df = '1984-11-15'
+    print(di,' || ',df)
   else:
     df = input('End date?\n').strip()
   # DATA
