@@ -1,4 +1,5 @@
-﻿import config as cf
+﻿from io import TextIOBase
+import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
@@ -13,25 +14,6 @@ assert cf
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  DATA  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-
-# FOR SMALL FILE:
-#TOTAL UFOS = 803
-#cities keys = 679
-#durations keys = 58
-#time keys = 249
-#date keys = 750
-#longitude keys = 632
-#latitude max count amougnst keys = 8
-
-# FOR LARGE FILE:
-#TOTAL UFOS = 80332
-#cities keys = 19900
-#duration keys = 533
-#time keys = 1390
-#date keys = 10525
-#longitude keys = 6977
-#latitude max count amougnst keys = 614
-
 
 class ufo:
   def __init__(self,pack,analyzer):
@@ -78,16 +60,19 @@ class ufo:
     print('___________________________________________________________________________________________')
 
 def initanalyzer():
+  global analyzer
   analyzer = {}
+  # EXHIBITION
+  analyzer['exhibition'] = {'total':0,'list':lt.newList()}
   # CITY
   analyzer['cities map'] = mp.newMap(19900,loadfactor = 1, maptype = 'CHAINING')
   analyzer['best city'] = {'best':None,'count':0}
   # DURATION
-  analyzer['duration rbt'] = rbt.newMap(cmpduration) # TODO
-  analyzer['best duration'] = {'best':None,'count':0} # TODO
+  analyzer['duration rbt'] = rbt.newMap(cmpduration) 
+  analyzer['best duration'] = {'best':None,'count':0}
   # TIME
-  analyzer['time rbt'] = rbt.newMap(cmptime) # TODO
-  analyzer['best time'] = {'best':None,'count':0} # TODO
+  analyzer['time rbt'] = rbt.newMap(cmptime)
+  analyzer['best time'] = {'best':None,'count':0} 
   analyzer['time prints'] = {'count':0,'ufos':rbt.newMap(cmptimedate)}
   # DATE
   analyzer['date map'] = mp.newMap(numelements = 10525, maptype = 'CHAINING', loadfactor = 1) 
@@ -96,13 +81,22 @@ def initanalyzer():
   analyzer['date prints'] = {'count':0,'ufos':rbt.newMap(cmpdatetime)}
   analyzer['date rbt'] = rbt.newMap(cmpdate)
   # LONGITUDE AND LATITUDE
-  analyzer['longitude map'] = mp.newMap(numelements = 6977, maptype = 'CHAINING', loadfactor = 1) # TODO
-  analyzer['longitude lst'] = lt.newList(datastructure = 'ARRAY_LIST',cmpfunction = cmplongitude) # TODO
+  analyzer['longitude map'] = mp.newMap(numelements = 6977, maptype = 'CHAINING', loadfactor = 1) 
+  analyzer['longitude lst'] = lt.newList(datastructure = 'ARRAY_LIST',cmpfunction = cmplongitude)
 
   analyzer['ufos'] = lt.newList(datastructure = 'ARRAY_LIST') # TODO
   return analyzer
 
 ######### DEFAULTS #########
+
+def exhibition(analyzer,ufo):
+    if analyzer['exhibition']['total'] < 10:
+        lt.addLast(analyzer['exhibition']['list'],ufo)
+    elif analyzer['exhibition']['total'] >= 10:
+        lt.deleteElement(analyzer['exhibition']['list'],6)
+        lt.addLast(analyzer['exhibition']['list'],ufo)
+    analyzer['exhibition']['total']+=1
+
 def citydefault(analyzer,ufo):
   # CITY 
   new = {}
@@ -165,6 +159,7 @@ def besttime(analyzer,ufo):
 ######### ADD #########
 def add(analyzer,pack):
   new = ufo(pack,analyzer)
+  exhibition(analyzer,new)
   lt.addLast(analyzer['ufos'],new)
   check = lambda key,mapkey : mp.get(analyzer[mapkey],key)
   # PUT UFO IN cities ############################
@@ -222,10 +217,24 @@ def prints(target,ufo,cmp):
     sixth = lt.getElement(keys,6)
     fifth = lt.getElement(keys,5)
     fourth = lt.getElement(keys,4)
+    third = lt.getElement(keys,3)
+    second = lt.getElement(keys,2)
+    first = lt.getElement(keys,1)
     if cmp(ufo,sixth) == -1 or cmp(ufo,fifth) == -1 or cmp(ufo,fourth) == -1:
+      rbt.remove(target['ufos'],third)
+      rbt.put(target['ufos'],ufo,None)
+      return
+    keys = rbt.keySet(target['ufos'])
+    sixth = lt.getElement(keys,6)
+    fifth = lt.getElement(keys,5)
+    fourth = lt.getElement(keys,4)
+    third = lt.getElement(keys,3)
+    second = lt.getElement(keys,2)
+    first = lt.getElement(keys,1)
+    if cmp(ufo,first) == 1 or cmp(ufo,second) == 1 or cmp(ufo,third) == 1:
       rbt.remove(target['ufos'],fourth)
       rbt.put(target['ufos'],ufo,None)
-  return target
+      return
 
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  AFTER LOADED  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -241,24 +250,7 @@ def sort(analyzer):
   #   mergesorting(lst,cmp)
   # LONGITUDE
   # DATE
-  lst = analyzer['date lst']
-  analyzer['date lst'] = quicksorting(analyzer['date lst'],cmpdate)[0]
-
-def test(analyzer):
-  count = 0
-  for longitude in lt.iterator(analyzer['longitude lst']):
-    if count == 5:
-      break
-    target = mp.get(analyzer['longitude map'],longitude)['value']
-    print('<<<<<<<<>>>>>>>')
-    print(f"longitude: {longitude} | count: {target['count']}")
-    print('-------->')
-    for latitudevalue in lt.iterator(rbt.valueSet(target['latitude rbt'])):
-      print(f"  latitude: {latitudevalue['latitude']} | count: {lt.size(latitudevalue['ufos'])}")
-      print('  ---- UFOS ---->')
-      for ufo in lt.iterator(latitudevalue['ufos']):
-        ufo.printufo()
-    count += 1
+  pass
 
 def mergesorting(lst, cmp):
   start_time = time.process_time()
@@ -319,45 +311,19 @@ def cmpdate(datei, datej):
   elif datei > datej:
     return -1
   return 0
-
 def cmplongitude(longitudei: ufo, longitudej: ufo):
   if longitudei < longitudej:
     return 1
   elif longitudei > longitudej:
     return -1
   return 0
-# CMP FUNCTIONS FOR LISTS
-
 def cmpdurationcountrycity(ufoi: ufo, ufoj: ufo):
-  if ufoi.duration != ufoj.duration:
-    return cmpduration(ufoi.duration,ufoj.duration)
-  # ELSE
-  if ufoi.country == ufoj.country:
-    targeti = ufoi.city
-    targetj = ufoj.city
-  else:
-    targeti = ufoi.country
-    targetj = ufoj.country
-  for i,j in (targeti,targetj):
-      if i == j:
-        continue
-      if ord(i) < ord(j):
-        return 1
-      else:
-        return -1
-  return 0
+  return
 def cmpdatetime(ufoi: ufo, ufoj: ufo):
   if ufoi.date == ufoj.date:
     return cmptime(ufoi.time, ufoj.time)
   else:
     return cmpdate(ufoi.date,ufoj.date)
-# def cmplatitude(ufoi: ufo, ufoj: ufo):
-#   if ufoi.latitude < ufoj.latitude:
-#     return 1
-#   elif ufoi.latitude > ufoj.latitude:
-#     return -1
-#   else:
-#     return cmplongitude(ufoi.longitude,ufoj.longitude)
 def cmplatitude(latitudei: ufo, latitudej: ufo):
   if latitudei < latitudej:
       return 1
@@ -385,66 +351,12 @@ def req1(analyzer,city):
 def req2(analyzer):
   pass
 
-def req3(analyzer,ti,tf):
-  # convert = lambda t : round(float(t[-2:])*60,2) + round(float(t[:2])*3600,2)
-  # ti = convert(ti)
-  # tf = convert(tf)
+def req3(analyzer,ti,tf): 
   defaultvalues = rbt.values(analyzer['time rbt'],tf,ti)
   for default in lt.iterator(defaultvalues):
     for ufo in lt.iterator(rbt.keySet(default['ufos'])):
       prints(analyzer['time prints'],ufo,cmptimedate)
       analyzer['time prints']['count'] += 1
-
-# def req4(analyzer,datei,datef):
-#   newdate = lambda y,m,d : datetime.date(y,m,d)
-#   get = lambda d : mp.get(analyzer['date map'],d)
-#   datei = datetime.date.fromisoformat(datei)
-#   datef = datetime.date.fromisoformat(datef)
-#   mi,mf,di,df = datei.month,datef.month,datei.day,datef.day
-#   found = False
-#   for y in range(datei.year,datef.year):
-#     if found:
-#       break
-#     if y != datei.year:
-#       mi = 1
-#     if y != datef.year:
-#       mf = 12
-#     for m in range(mi,mf+1):
-#       if found:
-#         break
-#       if y != datei.year and m != datei.month:
-#         di = 1
-#       if y == datef.year and m == datef.month:
-#         df = datef.day
-#       else:
-#         df = 31
-#       for d in range(di,df+1):
-#         try:
-#           date = newdate(y,m,d)
-#           entry = get(date)
-#           if entry != None:
-#             found = True
-#             break
-#         except:
-#           print(y,m,d)
-#           continue
-#   if not found:
-#     return None
-#   # ElSE
-#   posi = me.getValue(entry)['position']
-#   limitless = True
-#   while limitless:
-#     key = lt.getElement(analyzer['date lst'],posi)
-#     print(key)
-#     if key > datei and key < datef:
-#       targetmain = me.getValue(get(key))
-#       for ufo in lt.iterator(rbt.keySet(targetmain['ufos'])):
-#         # ADD FIRST 3 AND LAST 3
-#         prints(analyzer['date prints'],ufo,cmpdatetime)
-#         analyzer['date prints']['count'] += 1
-#     elif key > datef:
-#       limitless = False
-#     posi += 1
 
 def req4(analyzer,datei,datef):
   datei = datetime.date.fromisoformat(datei)
@@ -458,67 +370,3 @@ def req4(analyzer,datei,datef):
 def req5(analyzer,longi,longf,lati,latf):
   # -103.00 a -109.05 y una latitud desde 31.33 a 37.00
   return
-
-"""
-GUIA:
-def initanalyzer():
-  analyzer = {}
-  # CITY
-  analyzer['cities map'] = mp.newMap(19900,loadfactor = 1, maptype = 'CHAINING')
-  analyzer['best city'] = {'best':None,'count':0}
-  # DURATION
-  analyzer['duration rbt'] = rbt.newMap(cmpduration) # TODO
-  analyzer['best duration'] = {'best':None,'count':0} # TODO
-  # TIME
-  analyzer['time rbt'] = rbt.newMap(cmptime) # TODO
-  analyzer['best time'] = {'best':None,'count':0} # TODO
-  # DATE
-  analyzer['date map'] = mp.newMap(numelements = 10525, maptype = 'CHAINING', loadfactor = 1) # TODO
-  analyzer['best date'] = {'best':None,'count':0} # TODO
-  analyzer['date lst'] = lt.newList(datastructure = 'ARRAY_LIST',cmpfunction = cmpdate) # TODO
-  # LONGITUDE AND LATITUDE
-  analyzer['longitude map'] = mp.newMap(numelements = 6977, maptype = 'CHAINING', loadfactor = 1) # TODO
-  analyzer['longitude lst'] = lt.newList(datastructure = 'ARRAY_LIST',cmpfunction = cmplongitude) # TODO
-  analyzer['latitude lst'] = lt.newList(datastructure = 'ARRAY_LIST',cmpfunction = cmplatitude) # TODO
-
-  analyzer['ufos'] = lt.newList(datastructure = 'ARRAY_LIST') # TODO
-  return analyzer
-
-######### DEFAULTS #########
-def citydefault(analyzer,ufo):
-  # CITY 
-  new = {}
-  new['count'] = 1
-  new['ufos'] = lt.newList(cmpfunction = cmpdatetime)
-  lt.addLast(new1['ufos'],ufo)
-  mp.put(analyzer['cities map'],ufo.city,new1)
-def durationdefault(analyzer,ufo):
-  # DURATION
-  new = {}
-  new['count'] = 1
-  new['ufos'] = lt.newList(cmpfunction = cmpdurationcountrycity)
-def timedefault(analyzer,ufo):
-  # TIME
-  new = {}
-  new['count'] = 1
-  new['ufos'] = lt.newList(cmpfunction = cmptimedate)
-def datedefault(analyzer,ufo):
-  # DATE
-  new = {}
-  new['count'] = 1
-  new['ufos'] = lt.newList(cmpfunction = cmpdatetime)
-  new['position'] = lt.size(analyzer['date list']) + 1
-def longitudedefault(analyzer,ufo):
-  # LONGITUDE
-  new = {}
-  new['count'] = 1
-  new['ufos'] = lt.newList(cmpfunction = cmplatitude)
-  new['position'] = lt.size(analyzer['longitude list']) + 1
-def latitudedefault(analyzer,ufo):
-  # LONGITUDE
-  new = {}
-  new['count'] = 1
-  new['ufos'] = lt.newList(cmpfunction = cmplatitude)
-  new['position'] = lt.size(analyzer['latitude list']) + 1
-############################
-"""
