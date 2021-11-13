@@ -37,6 +37,7 @@ def charge():
   input('\nPRESS ENTER TO CONTINUE')
   return analyzer
 
+
 def initanalyzer():
   return controller.initanalyzer()
 
