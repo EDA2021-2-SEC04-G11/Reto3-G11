@@ -64,6 +64,7 @@ def req1(analyzer):
   print(f"TIME REQUIRED : {timef}")
 
 def req2(analyzer):
+  return
   print('+-+-+-+-+-+-+-+-+ REQ 2 +-+-+-+-+-+-+-+-+\n')
   # INPUTS
   # DATA
@@ -127,6 +128,7 @@ def req4(analyzer):
   print(f"TIME REQUIRED : {timef}")
 
 def req5(analyzer):
+  return
   # -103.00 a -109.05 y una latitud desde 31.33 a 37.00
   print('+-+-+-+-+-+-+-+-+ REQ 5 +-+-+-+-+-+-+-+-+\n')
   # INPUTS
@@ -143,6 +145,7 @@ def req5(analyzer):
   print(f"TIME REQUIRED : {timef}")
 
 def req6(analyzer):
+  return
   print('+-+-+-+-+-+-+-+-+ REQ 6 +-+-+-+-+-+-+-+-+\n')
   # INPUTS
   # DATA

@@ -1,5 +1,4 @@
-﻿from io import TextIOBase
-import config as cf
+﻿import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
@@ -7,10 +6,9 @@ from DISClib.DataStructures import rbt
 from DISClib.Algorithms.Sorting import mergesort as merge
 from DISClib.Algorithms.Sorting import quicksort as quick
 import datetime
-import sys
 import time
-from math import floor
 assert cf
+import sys
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  DATA  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -352,11 +350,13 @@ def req2(analyzer):
   pass
 
 def req3(analyzer,ti,tf):
+  run = True
   defaultvalues = rbt.values(analyzer['time rbt'],tf,ti)
   for default in lt.iterator(defaultvalues):
     for ufo in lt.iterator(rbt.keySet(default['ufos'])):
       prints(analyzer['time prints'],ufo,cmptimedate)
       analyzer['time prints']['count'] += 1
+  analyzer['time prints']['count'] = 0
 
 def req4(analyzer,datei,datef):
   datei = datetime.date.fromisoformat(datei)
@@ -366,6 +366,7 @@ def req4(analyzer,datei,datef):
     for ufo in lt.iterator(rbt.keySet(default['ufos'])):
       prints(analyzer['date prints'],ufo,cmpdatetime)
       analyzer['date prints']['count'] += 1
+  analyzer['date prints']['count'] = 0
 
 def req5(analyzer,longi,longf,lati,latf):
   # -103.00 a -109.05 y una latitud desde 31.33 a 37.00
